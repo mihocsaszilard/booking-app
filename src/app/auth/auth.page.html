@@ -4,6 +4,16 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-button color="successs" (click)="onLogin()">Login</ion-button>
+<ion-content class="ion-padding ">
+  <ion-list class="ion-margin ion-text-center">
+    <ion-item class="ion-margin-horizontal">
+      <ion-label color="medium" position="floating">E-Mail </ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+    <ion-item class="ion-margin-horizontal">
+      <ion-label color="medium" position="floating">Password </ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+    <ion-button class="ion-margin" color="medium" (click)="onLogin()">Login</ion-button>
+  </ion-list>
 </ion-content>

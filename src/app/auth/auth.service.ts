@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
 
-  private userIsAuth = false;
+  private userIsAuth = true; // set to true because need to login with every refresh
 
   get getUserIsAuth() {
     return this.userIsAuth;
