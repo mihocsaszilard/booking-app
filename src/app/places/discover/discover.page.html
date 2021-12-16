@@ -12,25 +12,45 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-grid>
+  <ion-segment (ionChange)="onFilterUpdate($event)">
+    <ion-segment-button value="all">All Places</ion-segment-button>
+    <ion-segment-button value="bookable">Bookable Places</ion-segment-button>
+  </ion-segment>
+  <ion-grid *ngIf="isLoading">
     <ion-row>
-      <ion-col size="12" sizeSm="6" offsetSm="3" class="ion-text-center">
+      <ion-col class="ion-text-center" size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4"
+        offsetXl="4">
+        <ion-spinner></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="!isLoading && (!relevantPlaces || relevantPlaces.length <= 0)">
+    <ion-row>
+      <ion-col class="ion-text-center" size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4"
+        offsetXl="4">
+        <h4>No places available. Please check out later!</h4>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="!isLoading && relevantPlaces.length > 0">
+    <ion-row>
+      <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4">
         <ion-card>
           <ion-card-header>
             <ion-card-title>
-              {{ discoverPlaces[0].title }}
+              {{ relevantPlaces[0].title }}
             </ion-card-title>
             <ion-card-subtitle>
-              {{ discoverPlaces[0].price | currency }} / Night
+              {{ relevantPlaces[0].price | currency }} / Night
             </ion-card-subtitle>
           </ion-card-header>
-          <ion-img [src]="discoverPlaces[0].imgUrl"></ion-img>
+          <ion-img [src]="relevantPlaces[0].imgUrl"></ion-img>
           <ion-card-content>
-            <p> {{ discoverPlaces[0].decsription }}</p>
+            <p> {{ relevantPlaces[0].description }}</p>
           </ion-card-content>
           <div class="ion-text-right">
-            <ion-button fill="clear" color="dark" routerDirection="forward"
-              [routerLink]="['/', 'places', 'tabs', 'discover', discoverPlaces[0].id]">
+            <ion-button class="ion-margin" fill="outline" color="primary" routerDirection="forward"
+              [routerLink]="['/', 'places', 'tabs', 'discover', relevantPlaces[0].id]">
               Show More
             </ion-button>
           </div>
@@ -39,7 +59,8 @@
     </ion-row>
 
     <ion-row>
-      <ion-col size="12" sizeSm="6" offsetSm="3" class="ion-text-center ion-padding">
+      <ion-col class="ion-padding-horizontal" size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4"
+        offsetXl="4">
         <ion-list>
           <!--slice excludes the first (featured) element-->
           <ion-item *ngFor="let place of discoverPlaces.slice(1)"
@@ -49,7 +70,7 @@
             </ion-thumbnail>
             <ion-label>
               <h2> {{ place.title }} </h2>
-              <p> {{ place.decsription }} </p>
+              <p> {{ place.description }} </p>
             </ion-label>
           </ion-item>
         </ion-list>
