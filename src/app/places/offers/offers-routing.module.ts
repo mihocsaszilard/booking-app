@@ -11,11 +11,9 @@ const routes: Routes = [
   {
     path: 'new-offer',
     loadChildren: () => import('./new-offer/new-offer.module').then(m => m.NewOfferPageModule)
-  },
-  {
-    path: ':offerId',
-    loadChildren: () => import('./offer-detail/offer-detail.module').then(m => m.OfferDetailPageModule)
-  },
+  }
+
+
 ];
 
 @NgModule({

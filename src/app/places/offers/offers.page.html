@@ -19,15 +19,16 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col size="12" sizeSm="6" offsetSm="3" class="ion-text-center ion-padding">
-        <ion-list>
+      <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4"
+        class="ion-text-center ion-padding">
+        <ion-spinner *ngIf="isLoading"></ion-spinner>
+        <div *ngIf="!isLoading && offerPlaces.length <=0">
+          <h4>No offers found. Please create one!</h4>
+          <ion-button routerLink='/places/tabs/offers/new-offer'>Create Offer</ion-button>
+        </div>
+        <ion-list *ngIf="!isLoading && offerPlaces.length > 0">
           <ion-item-sliding *ngFor="let offer of offerPlaces" #slidingItem>
-            <ion-item>
-              <ion-thumbnail slot="start">
-                <ion-img [src]="offer.imgUrl"></ion-img>
-              </ion-thumbnail>
-              <ion-label>{{ offer.title }}</ion-label>
-            </ion-item>
+            <app-offer-row [offer]="offer"></app-offer-row>
             <ion-item-options>
               <ion-item-option color="primary" (click)="onClose(slidingItem)"
                 [routerLink]="['/', 'places', 'tabs', 'offers', 'edit', offer.id]">
