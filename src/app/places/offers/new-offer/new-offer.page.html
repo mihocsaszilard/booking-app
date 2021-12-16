@@ -4,31 +4,76 @@
       <ion-back-button defaultHref="/places/tabs/offers">
       </ion-back-button>
     </ion-buttons>
-    <ion-title>New Offer</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onCreateOffer()" [disabled]="!form.valid">
+        <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Add New Offer</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid>
-    <ion-row class="ion-align-items-start ion-justify-content-center">
-      <ion-col sizeSm="4" sizeMd="2"> row1 col1 </ion-col>
-      <ion-col sizeSm="4" sizeMd="2">
-        <ion-card>
-          <h1>The Column</h1>
-          <p>row 1 col 2</p>
-        </ion-card>
-      </ion-col>
-
-      <!-- <ion-col> row1 col3 </ion-col>
-      <ion-col> row1 col4 </ion-col>
-      <ion-col> row1 col5 </ion-col>
-      <ion-col> row1 col6 </ion-col>
-      <ion-col> row1 col7 </ion-col>
-      <ion-col> row1 col8 </ion-col>
-      <ion-col> row1 col9 </ion-col>
-      <ion-col> row1 col10 </ion-col>
-      <ion-col> row1 col11 </ion-col>
-      <ion-col> row1 col12 </ion-col> -->
-    </ion-row>
-  </ion-grid>
+  <form [formGroup]="form">
+    <ion-grid>
+      <ion-row class="ion-align-items-start ">
+        <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4">
+          <ion-item>
+            <ion-label position="floating">Title</ion-label>
+            <ion-input type="text" autocomplete autocorrect formControlName='title'></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="!form.get('title').valid && form.get('title').touched">
+        <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4">
+          <ion-label color="danger">Please enter a title.</ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-start ">
+        <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4">
+          <ion-item>
+            <ion-label position="floating">Short description</ion-label>
+            <ion-textarea rows="5" formControlName='description'></ion-textarea>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="!form.get('description').valid && form.get('description').touched">
+        <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4">
+          <ion-label color="danger">Description must not be between 1 and 160 characters.</ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-start ">
+        <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4">
+          <ion-item>
+            <ion-label position="floating">Price</ion-label>
+            <ion-input type="number" formControlName='price'></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="!form.get('price').valid && form.get('price').touched">
+        <ion-col size="12" sizeSm="8" offsetSm="2" sizeMd="6" offsetMd="3" sizeXl="4" offsetXl="4">
+          <ion-label color="danger">Price must not be 0.</ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-start">
+        <ion-col size="6" sizeSm="4" offsetSm="2" sizeMd="3" offsetMd="3" sizeXl="2" offsetXl="4">
+          <ion-item>
+            <ion-label position="floating">Available from</ion-label>
+            <ion-datetime min="2021-12-31" max="2025-12-30" formControlName='dateFrom'></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6" sizeSm="4" sizeMd="3" sizeXl="2">
+          <ion-item>
+            <ion-label position="floating">Available to</ion-label>
+            <ion-datetime min="2021-12-30" max="2025-12-30" formControlName='dateTo'></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6" sizeSm="4" offsetSm="2" sizeMd="3" offsetMd="3" sizeXl="2" offsetXl="4">
+          <app-location-picker></app-location-picker>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>
