@@ -10,6 +10,65 @@
 </ion-header>
 
 <ion-content class="ion-text-center ion-padding">
-  <p>{{ selectedPlace.decsription }}}</p>
-  <ion-button color="light" (click)="onBookPlace()">Book {{ selectedPlace.title }} Now!</ion-button>
+  <p>{{ selectedPlace.description }}</p>
+  <form (ngSubmit)="onBookPlace()" #f="ngForm">
+    <ion-grid>
+      <ion-row class="ion-align-items-start ion-justify-content-center">
+        <ion-col sizeSm="6">
+          <ion-item>
+            <ion-label position="floating"> First Name </ion-label>
+            <ion-input type="text" ngModel required name="first-name"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-start ion-justify-content-center">
+        <ion-col sizeSm="6">
+          <ion-item>
+            <ion-label position="floating"> Last Name </ion-label>
+            <ion-input type="text" ngModel required name="last-name"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-start ion-justify-content-center">
+        <ion-col sizeSm="6">
+          <ion-item>
+            <ion-label position="floating"> Guest Number </ion-label>
+            <ion-select type="text" [ngModel]="'2'" name="guest-number">
+              <ion-select-option value="1">1</ion-select-option>
+              <ion-select-option value="2">2</ion-select-option>
+              <ion-select-option value="3">3</ion-select-option>
+              <ion-select-option value="4">4</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col sizeSm="3" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">From</ion-label>
+            <ion-datetime displayFormat="MMM DD YYYY" pickerFormat="YY MM DD"
+              [min]="selectedPlace.availableFrom.toISOString()" [max]="selectedPlace.availableTo.toISOString()"
+              [ngModel]="startDate" required="true" name="date-from" #startDateCtrl="ngModel">
+            </ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col sizeSm="3">
+          <ion-item>
+            <ion-label position="floating">To</ion-label>
+            <ion-datetime displayFormat="MMM DD YYYY" pickerFormat="YY MM DD" [min]="startDateCtrl.value"
+              [max]="selectedPlace.availableTo.toISOString()" [ngModel]="endDate" required="true" name="date-to">
+            </ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-align-items-start ion-justify-content-center">
+        <ion-col sizeSm="6">
+          <ion-button color="primary" (click)="onBookPlace()" expand="block" [disabled]="!f.valid && !datesValid()">Book
+            {{
+            selectedPlace.title }} Now!
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>
