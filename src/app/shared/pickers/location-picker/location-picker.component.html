@@ -1,6 +1,13 @@
-<div>
-  <ion-button color="primary" (click)="onPickLocation()">
-    <ion-icon name="map" slot="start"></ion-icon>
-    <ion-label> Select Location</ion-label>
-  </ion-button>
-</div>
+<ion-grid class="container">
+  <ion-row class="picker ">
+    <ion-col size="6" offset="6" class="ion-text-center">
+      <ion-spinner (click)="onPickLocation()" *ngIf="isLoading"></ion-spinner>
+      <ion-img role="button" (click)="onPickLocation()" class="location-image" [src]="selectedLocationImg"
+        *ngIf="selectedLocationImg"></ion-img>
+      <ion-button disabled="true" *ngIf="!selectedLocationImg && !isLoading" color="primary" (click)="onPickLocation()">
+        <ion-icon name="map" slot="start"></ion-icon>
+        <ion-label> Select Location</ion-label>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>
