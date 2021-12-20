@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AlertController, LoadingController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { AuthResponseData, AuthService } from './auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -10,17 +12,48 @@ import { AuthService } from './auth.service';
 })
 export class AuthPage implements OnInit {
 
-  isLogin = false;
+  isLogin = true;
+  isLoading = false;
 
-
-  constructor(private autService: AuthService, private router: Router) { }
+  constructor(
+    private autService: AuthService,
+    private router: Router,
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
+  ) { }
 
   ngOnInit() {
   }
 
-  onLogin() {
-    this.autService.login();
-    this.router.navigateByUrl('/places/tabs');
+  authenticate(email: string, password: string) {
+    this.isLoading = true;
+    this.loadingCtrl
+      .create({
+        keyboardClose: true,
+        message: 'Logging in...'
+      })
+      .then(loadingEl => {
+        loadingEl.present();
+        let authObs: Observable<AuthResponseData>;
+        if (this.isLogin) {
+          authObs = this.autService.login(email, password);
+        } else {
+          authObs = this.autService.signUp(email, password);
+        }
+        authObs.subscribe(res => {
+          console.log(res);
+          this.isLoading = false;
+          loadingEl.dismiss();
+          this.router.navigateByUrl('/places/tabs/discover');
+        },
+          errRes => {
+            loadingEl.dismiss();
+            const code = errRes.error.error.message;
+            const message = `${code.charAt(0) + code.slice(1).toLowerCase().replace(/_/g, ' ')}!`;
+            this.showAlert(message);
+          }
+        );
+      });
   }
 
   onSubmit(form: NgForm) {
@@ -32,14 +65,21 @@ export class AuthPage implements OnInit {
     const password = form.value.password;
     console.log(email, password);
 
-    if (this.isLogin) {
-      // send a request to login
-    } else {
-      // send request to sing up
-    }
+    this.authenticate(email, password);
   }
 
   onSwitchAuth() {
     this.isLogin = !this.isLogin;
   }
+
+  private showAlert(message: string) {
+    this.alertCtrl.create({
+      header: 'Authentication failed!',
+      message,
+      buttons: ['OK']
+    }).then(alertEl => {
+      alertEl.present();
+    });
+  }
+
 }

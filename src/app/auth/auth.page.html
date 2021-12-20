@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{ isLogin ? 'Sign Up!' : 'Login!'}}</ion-title>
+    <ion-title>{{ isLogin ? 'Login!': 'Sign Up!'}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -31,10 +31,10 @@
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
           <ion-button [disabled]="!f.valid" type="submit" class="ion-margin" color="tertiary" fill="outline"
-            (click)="onLogin()" expand="block">Submit
+            expand="block">{{ isLogin ? 'Log in!':'Sign Up!'}}
           </ion-button>
           <ion-button class="ion-margin" color="medium" fill="clear" (click)="onSwitchAuth()" expand="block">
-            to {{ isLogin ? 'Log in!':'Sign Up!'}}
+            to {{ !isLogin ? 'Log in!':'Sign Up!'}}
           </ion-button>
         </ion-col>
       </ion-row>
