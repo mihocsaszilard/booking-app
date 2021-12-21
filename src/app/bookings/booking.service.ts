@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { delay, switchMap, take, tap, map } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
+import { switchMap, take, tap, map } from 'rxjs/operators';
 
+import { AuthService } from '../auth/auth.service';
 import { Booking } from './booking.model';
 
 interface BookingData {
@@ -40,23 +40,30 @@ export class BookingService {
     dateTo: Date
   ) {
     let generatedId: string;
-    const newBooking = new Booking(
-      Math.random().toString(),
-      placeId,
-      placeTitle,
-      placeImg,
-      firstName,
-      lastName,
-      this.authService.getUserId,
-      guestNumber,
-      dateFrom,
-      dateTo
-    );
-    return this.http.post<{ name: string }>(
-      'https://booking-app-e2ddc-default-rtdb.europe-west1.firebasedatabase.app/bookings.json',
-      { ...newBooking, id: null }
-    ).pipe(
-      switchMap(res => {
+    let newBooking: Booking;
+    return this.authService.getUserId.pipe(
+      take(1),
+      switchMap(userId => {
+        if (!userId) {
+          throw new Error('No user found!');
+        }
+        newBooking = new Booking(
+          Math.random().toString(),
+          placeId,
+          placeTitle,
+          placeImg,
+          firstName,
+          lastName,
+          userId,
+          guestNumber,
+          dateFrom,
+          dateTo
+        );
+        return this.http.post<{ name: string }>(
+          'https://booking-app-e2ddc-default-rtdb.europe-west1.firebasedatabase.app/bookings.json',
+          { ...newBooking, id: null }
+        );
+      }), switchMap(res => {
         generatedId = res.name;
         return this.bookings;
       }),
@@ -64,7 +71,8 @@ export class BookingService {
       tap(bookings => {
         newBooking.id = generatedId;
         this.bookings.next(bookings.concat(newBooking));
-      }));
+      })
+    );
   }
 
   cancelBooking(bookingId: string) {
@@ -85,29 +93,32 @@ export class BookingService {
     return this.http.get<{ [key: string]: BookingData }>(
       // eslint-disable-next-line max-len
       `https://booking-app-e2ddc-default-rtdb.europe-west1.firebasedatabase.app/bookings.json?orderBy="userId"&equalTo="${this.authService.getUserId}"`
-    ).pipe(
-      map(bookingData => {
-        const bookings = [];
-        for (const key in bookingData) {
-          if (bookingData.hasOwnProperty(key)) {
-            bookings.push(
-              new Booking(
-                key,
-                bookingData[key].placeId,
-                bookingData[key].userId,
-                bookingData[key].placeImage,
-                bookingData[key].firstName,
-                bookingData[key].lastName,
-                bookingData[key].userId,
-                bookingData[key].guestNumber,
-                new Date(bookingData[key].dateFrom),
-                new Date(bookingData[key].dateTo)
-              ));
+    )
+      .pipe(
+        map(bookingData => {
+          const bookings = [];
+          for (const key in bookingData) {
+            if (bookingData.hasOwnProperty(key)) {
+              bookings.push(
+                new Booking(
+                  key,
+                  bookingData[key].placeId,
+                  bookingData[key].userId,
+                  bookingData[key].placeImage,
+                  bookingData[key].firstName,
+                  bookingData[key].lastName,
+                  bookingData[key].userId,
+                  bookingData[key].guestNumber,
+                  new Date(bookingData[key].dateFrom),
+                  new Date(bookingData[key].dateTo)
+                )
+              );
+            }
           }
-        }
-        return bookings;
-      }), tap(bookings => {
-        this.bookings.next(bookings);
-      }));
+          return bookings;
+        }), tap(bookings => {
+          this.bookings.next(bookings);
+        })
+      );
   }
 }

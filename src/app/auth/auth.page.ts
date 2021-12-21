@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Observable } from 'rxjs';
+
 import { AuthResponseData, AuthService } from './auth.service';
 
 @Component({
@@ -66,6 +67,7 @@ export class AuthPage implements OnInit {
     console.log(email, password);
 
     this.authenticate(email, password);
+    form.reset();
   }
 
   onSwitchAuth() {

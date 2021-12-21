@@ -119,20 +119,27 @@ export class PlacesService {
 
   addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date) {
     let generatedId: string;
-    const newPlace = new Place(
-      Math.random().toString(),
-      title, description,
-      'https://exp.cdn-hotels.com/hotels/1000000/10000/6700/6666/4fd95a3a_z.jpg?impolicy=fcrop&w=500&h=333&q=medium',
-      price,
-      dateFrom,
-      dateTo,
-      this.authService.getUserId
-    );
-
-    return this.http.post<{ name: string }>(
-      'https://booking-app-e2ddc-default-rtdb.europe-west1.firebasedatabase.app/offered-place.json',
-      { ...newPlace, id: null }
-    ).pipe(
+    let newPlace: Place;
+    return this.authService.getUserId.pipe(
+      take(1),
+      switchMap(userId => {
+        if (!userId) {
+          throw new Error('No user found!');
+        }
+        newPlace = new Place(
+          Math.random().toString(),
+          title, description,
+          'https://exp.cdn-hotels.com/hotels/1000000/10000/6700/6666/4fd95a3a_z.jpg?impolicy=fcrop&w=500&h=333&q=medium',
+          price,
+          dateFrom,
+          dateTo,
+          userId
+        );
+        return this.http.post<{ name: string }>(
+          'https://booking-app-e2ddc-default-rtdb.europe-west1.firebasedatabase.app/offered-place.json',
+          { ...newPlace, id: null }
+        );
+      }),
       switchMap(res => {
         generatedId = res.name;
         return this.places;
